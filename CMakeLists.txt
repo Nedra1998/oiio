@@ -12,14 +12,16 @@ string (TOUPPER ${PROJ_NAME} PROJ_NAME_UPPER)  # short name upper case
 set (PROJECT_VERSION_RELEASE_TYPE "")   # "dev", "betaX", "RCY", ""
 set (${PROJECT_NAME}_VERSION_RELEASE_TYPE ${PROJECT_VERSION_RELEASE_TYPE})
 set (PROJECT_AUTHORS "Contributors to the OpenImageIO project")
+set (OIIO_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}})
+set (OIIO_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}})
 
 # If the user wants to use Conan to build dependencies, they will have done
 # this prior to the cmake config:
 #   cd <build area>
 #   conan install <source area>
 # and that will leave a conanbuildinfo.cmake in the build area for us.
-if (EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    include (${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+if (EXISTS ${OIIO_BINARY_DIR}/conanbuildinfo.cmake)
+    include (${OIIO_BINARY_DIR}/conanbuildinfo.cmake)
     message (STATUS "Using Conan for dependencies")
     conan_basic_setup()
 endif()
@@ -36,17 +38,17 @@ message (STATUS "CMake ${CMAKE_VERSION}")
 message (STATUS "CMake system           = ${CMAKE_SYSTEM}")
 message (STATUS "CMake system name      = ${CMAKE_SYSTEM_NAME}")
 message (STATUS "Project source dir     = ${PROJECT_SOURCE_DIR}")
-message (STATUS "Project build dir      = ${CMAKE_BINARY_DIR}")
+message (STATUS "Project build dir      = ${OIIO_BINARY_DIR}")
 message (STATUS "Project install prefix = ${CMAKE_INSTALL_PREFIX}")
 message (STATUS "Configuration types    = ${CMAKE_CONFIGURATION_TYPES}")
 message (STATUS "Build type             = ${CMAKE_BUILD_TYPE}")
 
 # Make the build area layout look a bit more like the final dist layout
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OIIO_BINARY_DIR}/lib)
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OIIO_BINARY_DIR}/lib)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OIIO_BINARY_DIR}/bin)
 
-if ("${PROJECT_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+if ("${PROJECT_SOURCE_DIR}" STREQUAL "${OIIO_BINARY_DIR}")
     message (FATAL_ERROR "Not allowed to run in-source build!")
 endif ()
 
@@ -125,9 +127,9 @@ include (CTest)
 
 include_directories (
     BEFORE
-    "${CMAKE_SOURCE_DIR}/src/include"
-    "${CMAKE_BINARY_DIR}/src/include"
-    "${CMAKE_BINARY_DIR}/include"
+    "${OIIO_SOURCE_DIR}/src/include"
+    "${OIIO_BINARY_DIR}/src/include"
+    "${OIIO_BINARY_DIR}/include"
   )
 
 # Tell CMake to process the sub-directories
@@ -206,8 +208,8 @@ endif ()
 
 # install pkgconfig file
 IF ( NOT MSVC )
-   configure_file(src/build-scripts/OpenImageIO.pc.in "${CMAKE_BINARY_DIR}/OpenImageIO.pc" @ONLY)
-   install (FILES "${CMAKE_BINARY_DIR}/OpenImageIO.pc"
+   configure_file(src/build-scripts/OpenImageIO.pc.in "${OIIO_BINARY_DIR}/OpenImageIO.pc" @ONLY)
+   install (FILES "${OIIO_BINARY_DIR}/OpenImageIO.pc"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
             COMPONENT developer)
 ENDIF()
@@ -224,9 +226,9 @@ include (CMakePackageConfigHelpers)
 # the file containing the exported targets
 set (OIIO_TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets.cmake")
 # the version file
-set (OIIO_VERSION_CONFIG "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+set (OIIO_VERSION_CONFIG "${OIIO_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
 # the config file that is actually looked for by find_package
-set (OIIO_PROJECT_CONFIG "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+set (OIIO_PROJECT_CONFIG "${OIIO_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
 # where all these files will be installed
 set (OIIO_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
@@ -239,7 +241,7 @@ write_basic_package_version_file (
 # generate the Targets file in the binary dir using the targets collected in
 # OIIO_EXPORTED_TARGETS each target is added to OIIO_EXPORTED_TARGETS
 # through the macro install_target().
-export (EXPORT OIIO_EXPORTED_TARGETS FILE "${CMAKE_BINARY_DIR}/${OIIO_TARGETS_EXPORT_NAME}")
+export (EXPORT OIIO_EXPORTED_TARGETS FILE "${OIIO_BINARY_DIR}/${OIIO_TARGETS_EXPORT_NAME}")
 
 # generate the config file from the template in the binary dir
 configure_package_config_file ("${PROJECT_SOURCE_DIR}/src/cmake/Config.cmake.in"
@@ -455,12 +457,12 @@ set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpenImageIO is an open source library fo
 set (CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/src/doc/Description.txt")
 set (CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME}-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
 #SET (CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_SOURCE_DIR}")
-file (MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/cpack")
-file (COPY "${PROJECT_SOURCE_DIR}/LICENSE.md" DESTINATION "${CMAKE_BINARY_DIR}/cpack")
-file (RENAME "${CMAKE_BINARY_DIR}/cpack/LICENSE.md" "${CMAKE_BINARY_DIR}/cpack/License.txt")
-set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_BINARY_DIR}/cpack/License.txt")
-file (COPY "${PROJECT_SOURCE_DIR}/README.md" DESTINATION "${CMAKE_BINARY_DIR}/cpack")
-set (CPACK_RESOURCE_FILE_README "${CMAKE_BINARY_DIR}/cpack/README.md")
+file (MAKE_DIRECTORY "${OIIO_BINARY_DIR}/cpack")
+file (COPY "${PROJECT_SOURCE_DIR}/LICENSE.md" DESTINATION "${OIIO_BINARY_DIR}/cpack")
+file (RENAME "${OIIO_BINARY_DIR}/cpack/LICENSE.md" "${OIIO_BINARY_DIR}/cpack/License.txt")
+set (CPACK_RESOURCE_FILE_LICENSE "${OIIO_BINARY_DIR}/cpack/License.txt")
+file (COPY "${PROJECT_SOURCE_DIR}/README.md" DESTINATION "${OIIO_BINARY_DIR}/cpack")
+set (CPACK_RESOURCE_FILE_README "${OIIO_BINARY_DIR}/cpack/README.md")
 set (CPACK_RESOURCE_FILE_WELCOME "${PROJECT_SOURCE_DIR}/src/doc/Welcome.txt")
 #SET (CPACK_STRIP_FILES Do we need this?)
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

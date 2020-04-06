@@ -29,7 +29,7 @@ if (USE_GENERATED_EXPORT_HEADER)
           CUSTOM_CONTENT_FROM_VARIABLE exportextras
           )
     list (REMOVE_ITEM public_headers ${PROJECT_NAME}/export.h)
-    list (APPEND public_headers "${CMAKE_BINARY_DIR}/src/include/export.h")
+    list (APPEND public_headers "${OIIO_BINARY_DIR}/src/include/export.h")
 endif()
 
 
@@ -44,8 +44,8 @@ set (versionfile oiioversion.h)
 if (VERBOSE)
     message(STATUS "Create ${versionfile} from ${versionfile}.in")
 endif ()
-configure_file (${PROJECT_NAME}/${versionfile}.in "${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}/${versionfile}" @ONLY)
-list (APPEND public_headers "${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}/${versionfile}")
+configure_file (${PROJECT_NAME}/${versionfile}.in "${OIIO_BINARY_DIR}/include/${PROJECT_NAME}/${versionfile}" @ONLY)
+list (APPEND public_headers "${OIIO_BINARY_DIR}/include/${PROJECT_NAME}/${versionfile}")
 
 
 install (FILES ${public_headers}

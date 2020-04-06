@@ -168,8 +168,8 @@ macro (setup_python_module)
     # non-python libraries of the same name (which aren't prefixed by "lib"
     # on Windows).
     set_target_properties (${target_name} PROPERTIES
-            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/python/site-packages
-            ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/python/site-packages
+            LIBRARY_OUTPUT_DIRECTORY ${OIIO_BINARY_DIR}/lib/python/site-packages
+            ARCHIVE_OUTPUT_DIRECTORY ${OIIO_BINARY_DIR}/lib/python/site-packages
             )
 
     install (TARGETS ${target_name}

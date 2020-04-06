@@ -139,9 +139,9 @@ endmacro ()
 #
 # Usage:
 #   oiio_set_testenv ( testname
-#                      testsuite  - The root of all tests ${CMAKE_SOURCE_DIR}/testsuite
-#                      testsrcdir - Current test directory in ${CMAKE_SOURCE_DIR}
-#                      testdir    - Current test sandbox in ${CMAKE_BINARY_DIR}
+#                      testsuite  - The root of all tests ${OIIO_SOURCE_DIR}/testsuite
+#                      testsrcdir - Current test directory in ${OIIO_SOURCE_DIR}
+#                      testdir    - Current test sandbox in ${OIIO_BINARY_DIR}
 #                      IMAGEDIR   - Optional path to image reference/compare directory)
 #
 macro (oiio_set_testenv testname testsuite testsrcdir testdir IMAGEDIR)
@@ -187,9 +187,9 @@ macro (oiio_add_tests)
         # Add the tests if all is well.
         set (_has_generator_expr TRUE)
         foreach (_testname ${_ats_UNPARSED_ARGUMENTS})
-            set (_testsuite "${CMAKE_SOURCE_DIR}/testsuite")
+            set (_testsuite "${OIIO_SOURCE_DIR}/testsuite")
             set (_testsrcdir "${_testsuite}/${_testname}")
-            set (_testdir "${CMAKE_BINARY_DIR}/testsuite/${_testname}")
+            set (_testdir "${OIIO_BINARY_DIR}/testsuite/${_testname}")
             if (_ats_TESTNAME)
                 set (_testname "${_ats_TESTNAME}")
             endif ()
@@ -197,10 +197,10 @@ macro (oiio_add_tests)
                 set (_testname "${_testname}-broken")
             endif ()
 
-            set (_runtest python "${CMAKE_SOURCE_DIR}/testsuite/runtest.py" ${_testdir})
+            set (_runtest python "${OIIO_SOURCE_DIR}/testsuite/runtest.py" ${_testdir})
             if (MSVC_IDE)
                 set (_runtest ${_runtest} --devenv-config $<CONFIGURATION>
-                                          --solution-path "${CMAKE_BINARY_DIR}" )
+                                          --solution-path "${OIIO_BINARY_DIR}" )
             endif ()
 
             file (MAKE_DIRECTORY "${_testdir}")
@@ -215,10 +215,10 @@ macro (oiio_add_tests)
             if (_testname MATCHES "texture")
                 set (_testname ${_testname}.batch)
                 set (_testdir ${_testdir}.batch)
-                set (_runtest python "${CMAKE_SOURCE_DIR}/testsuite/runtest.py" ${_testdir})
+                set (_runtest python "${OIIO_SOURCE_DIR}/testsuite/runtest.py" ${_testdir})
                 if (MSVC_IDE)
                     set (_runtest ${_runtest} --devenv-config $<CONFIGURATION>
-                                          --solution-path "${CMAKE_BINARY_DIR}" )
+                                          --solution-path "${OIIO_BINARY_DIR}" )
                 endif ()
                 file (MAKE_DIRECTORY "${_testdir}")
                 add_test ( NAME "${_testname}"
